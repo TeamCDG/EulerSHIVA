@@ -1,23 +1,21 @@
 import java.util.List;
 
-
 public class Knot {
 
 	private List<Integer> cKnots;
 	private int id;
-	
+
 	public Knot(int id, List<Integer> cKnots)
 	{
 		this.cKnots = cKnots;
 		this.id = id;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
 
-	public int getKnotCount()
-	{
+	public int getKnotCount() {
 		return cKnots.size();
 	}
 
@@ -29,6 +27,3 @@ public class Knot {
 	public String toString() {
 		return "Knot [cKnots=" + cKnots + "]";
 	}
-	
-	
-}
