@@ -29,6 +29,20 @@ public class Main {
 	
 	public Main(List<Knot> knots) {
 		
+		int res = checkEuler(knots);
+		
+		if(res == 0) {
+			System.out.println(calculateCircle(knots));
+		} else if (res == 1) {
+			System.out.println(calculatePath(knots));
+		} else {
+			System.exit(-1);
+		}
+				
+	}
+	
+	private int checkEuler(List<Knot> knots) {
+		
 		int odd = 0;
 		for (int i = 0; i <knots.size(); i++) {
 			if(knots.get(i).getKnotCount() % 2 != 0) {
@@ -36,15 +50,24 @@ public class Main {
 			}
 		}
 		
-		if(odd == 0)
+		if(odd == 0) {
 			System.out.println("[INFO] Eulercircle possible");
-		else if (odd == 2)
+			return 0;
+		} else if (odd == 2) {
 			System.out.println("[INFO] Eulerpath possible");
-		else
+			return 1;
+		} else {
 			System.err.println("[ERROR] 33: Fuck you.");
-		
-		
-		
+			return -1;
+		}
+	}
+	
+	private String calculateCircle(List<Knot> knots) {
+		return null;
+	}
+	
+	private String calculatePath(List<Knot> knots) {
+		return null;
 	}
 
 }
