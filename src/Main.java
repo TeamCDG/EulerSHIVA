@@ -50,11 +50,11 @@ public class Main {
 
                 switch (odd) {
                         case 0:  System.out.println("[INFO] Eulercircle possible");
-                                 return 0; break;
+                                 return 0;
                         case 2:  System.out.println("[INFO] Eulerpath possible");
-                                 return 1; break;
+                                 return 1;
                         default: System.err.println("[ERROR] 33: Fuck you.");
-                                 return -1; break;
+                                 return -1;
                 }
         }
 
