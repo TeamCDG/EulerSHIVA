@@ -13,10 +13,10 @@ class Main(object):
         if (res == 0):
             print(self.calculateCircle(knots))
         elif (res == 1):
-            self.calculatePath(knots)
+            print(self.calculatePath(knots))
         else:
             print("Unknown error in `checkEuler(knots)'", file=sys.stderr)
-        exit(-1)
+            exit(-1)
 
     def checkEuler(self, knots) -> "int":
         odd = 0
@@ -49,10 +49,10 @@ def main():
 
     knots = []
 
-    for i in range(len(sys.argv)):
+    for i in range(1, len(sys.argv)):
         connected = []
 
-        for x in range(1, len(sys.argv[i])):
+        for x in range(0, len(sys.argv[i])):
             connected.append(str(sys.argv[i][x]))
 
         knots.append(Knot(i, connected))
