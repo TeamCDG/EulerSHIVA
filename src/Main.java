@@ -5,7 +5,7 @@ public class Main {
 
         public static void main(String[] args) {
 
-                if (args.length == 0) {
+                if (args.length == 0 ^ args.length == 1) {
                         System.err.println("[ERROR] 69: Nein. Einfach nur nein.");
                         System.exit(-1);
                 }
