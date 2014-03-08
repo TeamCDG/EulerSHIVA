@@ -10,7 +10,7 @@ public class Main {
                         System.exit(-1);
                 }
 
-                List<Knot> knots = new ArrayList<Knot>();
+                List<Vertex> vertices = new ArrayList<Vertex>();
 
                 for (int i = 0; i < args.length; i++) {
 
@@ -20,50 +20,47 @@ public class Main {
                                 connected.add(new Integer(args[i].charAt(x)));
                         }
 
-                        knots.add(new Knot(i, connected));
+                        vertices.add(new Vertex(i, connected));
                 }
 
-                new Main(knots);
+                new Main(vertices);
         }
 
-        public Main(List<Knot> knots) {
+        public Main(List<Vertex> vertices) {
 
-                int res = checkEuler(knots);
+                int res = checkEuler(vertices);
 
                 switch (res) {
 
-                        case 0:  System.out.println(calculateCircle(knots)); break;
-                        case 1:  System.out.println(calculatePath(knots));   break;
-                        case -1: System.exit(-1);                            break;
+                        case 0:  System.out.println(calculateCircle(vertices)); break;
+                        case 1:  System.out.println(calculatePath(vertices));   break;
+                        case -1: System.exit(-1);                               break;
                 }
         }
 
-        private int checkEuler(List<Knot> knots) {
+        private int checkEuler(List<Vertex> vertices) {
 
                 int odd = 0;
 
-                for (int i = 0; i < knots.size(); i++) {
+                for (int i = 0; i < vertices.size(); i++) {
 
-                        if ((knots.get(i).getKnotCount() % 2) != 0)
+                        if ((vertices.get(i).getEdgeCount() % 2) != 0)
                                 odd++;
                 }
 
                 switch (odd) {
-                        case 0:  System.out.println("[INFO] Eulercircle possible");
-                                 return 0;
-                        case 2:  System.out.println("[INFO] Eulerpath possible");
-                                 return 1;
-                        default: System.err.println("[ERROR] 33: Fuck you.");
-                                 return -1;
+                        case 0:  System.out.println("[INFO] Eulercircle possible"); return 0;
+                        case 2:  System.out.println("[INFO] Eulerpath possible");   return 1;
+                        default: System.err.println("[ERROR] 33: Fuck you.");       return -1;
                 }
         }
 
-        private String calculateCircle(List<Knot> knots) {
+        private String calculateCircle(List<Vertex> vertices) {
                 // TODO: Implement Eulercircle logic
                 return null;
         }
 
-        private String calculatePath(List<Knot> knots) {
+        private String calculatePath(List<Vertex> vertices) {
                 // TODO Implement Eulerpath logic
                 return null;
         }
