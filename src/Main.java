@@ -3,9 +3,12 @@ import java.util.List;
 
 public class Main {
 
+        // TODO: Use this for calculate*
+        private ArrayList<boolean[]> visited = new ArrayList<boolean[]>();
+
         public static void main(String[] args) {
 
-                if (args.length == 0 ^ args.length == 1) {
+                if (args.length <= 1) {
                         System.err.println("[ERROR] 69: Nein. Einfach nur nein.");
                         System.exit(-1);
                 }
@@ -29,6 +32,13 @@ public class Main {
         public Main(List<Vertex> vertices) {
 
                 int res = checkEuler(vertices);
+
+                // XXX: May be implemented nicer?
+                for (Vertex v : vertices) {
+                        boolean[] boolAr = new boolean[v.getEdgeCount()];
+                        java.util.Arrays.fill(boolAr, false);
+                        visited.add(boolAr);
+                }
 
                 switch (res) {
 
