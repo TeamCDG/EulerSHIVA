@@ -59,10 +59,12 @@ public class Main {
         }
 
         private String calculateCircle(List<Knot> knots) {
+                // TODO: Implement Eulercircle logic
                 return null;
         }
 
         private String calculatePath(List<Knot> knots) {
+                // TODO Implement Eulerpath logic
                 return null;
         }
 }
