@@ -62,7 +62,7 @@ class Main(object):
         pass
 
 def main():
-    if (len(sys.argv) == 1):
+    if (len(sys.argv) > 2):
         print("Usage:\tpython Main.py [Vertex] [Vertex] ...")
         print("\tVertex = String of Edges e.g. 123")
         print("\tEdge = Specifer e.g. a Number")
