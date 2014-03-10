@@ -35,8 +35,8 @@ public class Main {
 
                 // XXX: May be implemented nicer?
                 for (Vertex v : vertices) {
-                        boolean[] boolAr = new boolean[v.getEdgeCount()];
-                        java.util.Arrays.fill(boolAr, false);
+                        boolean[] walkAble = new boolean[v.getEdgeCount()];
+                        java.util.Arrays.fill(boolAr, true);
                         visited.add(boolAr);
                 }
 
