@@ -4,7 +4,7 @@ import java.util.List;
 public class Main {
 
         // TODO: Use this for calculate*
-        private ArrayList<boolean[]> visited = new ArrayList<boolean[]>();
+        private boolean[] walkAble;
 
         public static void main(String[] args) {
 
@@ -20,6 +20,7 @@ public class Main {
                         List<Integer> connected = new ArrayList<Integer>();
 
                         for (int x = 0; x < args[i].length(); x++) {
+                                //FIXME: connected adds the int representation of the char
                                 connected.add(new Integer(args[i].charAt(x)));
                         }
 
@@ -32,13 +33,20 @@ public class Main {
         public Main(List<Vertex> vertices) {
 
                 int res = checkEuler(vertices);
+                ArrayList<Integer> includes = new ArrayList<Integer>();
 
-                // XXX: May be implemented nicer?
                 for (Vertex v : vertices) {
-                        boolean[] walkAble = new boolean[v.getEdgeCount()];
-                        java.util.Arrays.fill(boolAr, true);
-                        visited.add(boolAr);
+                        for (Integer i : v.getEdges()) {
+                                // XXX: Delete me, please
+                                System.out.println(i);
+                                if (!includes.contains(i)) {
+                                        includes.add(i);
+                                }
+                        }
                 }
+
+                walkAble = new boolean[includes.size()];
+                java.util.Arrays.fill(walkAble, true);
 
                 switch (res) {
 
@@ -68,18 +76,22 @@ public class Main {
         private String calculateCircle(List<Vertex> vertices) {
                 ArrayList<Integer> rList = new ArrayList<Integer>();
 
-                for (Vertex v : vertices) {
-                        edges = v.getEdges();
-                        rList.append(1);
+                // FIXME: Logic not correct with the booleans, will make it later
 
-                        for (int i = 0; edges.size(); i++) {
-                                if (walkAble.get(1)) {
-                                        rList.append(2);
-                                        walkAble.get(0) == false;
+                for (int i = 0; i < vertices.size(); i++) {
+                        for (int j = 0; j < vertices.get(i).getEdgeCount(); j++) {
+                                if (walkAble[j]) {
+                                        walkAble[j] = false;
+                                        rList.add(i);
                                 }
                         }
+                }
 
-                return rList;
+                for (Integer i : rList) {
+                        System.out.println(i+1);
+                }
+
+                return null;
         }
 
         private String calculatePath(List<Vertex> vertices) {
