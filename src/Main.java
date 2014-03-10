@@ -66,8 +66,20 @@ public class Main {
         }
 
         private String calculateCircle(List<Vertex> vertices) {
-                // TODO: Implement Eulercircle logic
-                return null;
+                ArrayList<Integer> rList = new ArrayList<Integer>();
+
+                for (Vertex v : vertices) {
+                        edges = v.getEdges();
+                        rList.append(1);
+
+                        for (int i = 0; edges.size(); i++) {
+                                if (walkAble.get(1)) {
+                                        rList.append(2);
+                                        walkAble.get(0) == false;
+                                }
+                        }
+
+                return rList;
         }
 
         private String calculatePath(List<Vertex> vertices) {
