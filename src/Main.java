@@ -4,7 +4,7 @@ import java.util.List;
 public class Main {
 
         // TODO: Use this for calculate*
-        private boolean[] walkAble;
+        private ArrayList<Boolean> walkAble;
 
         public static void main(String[] args) {
 
@@ -20,7 +20,6 @@ public class Main {
                         List<Integer> connected = new ArrayList<Integer>();
 
                         for (int x = 0; x < args[i].length(); x++) {
-                                //FIXME: connected adds the int representation of the char
                                 connected.add(new Integer(args[i].charAt(x)));
                         }
 
@@ -35,18 +34,28 @@ public class Main {
                 int res = checkEuler(vertices);
                 ArrayList<Integer> includes = new ArrayList<Integer>();
 
+                Integer highestValue = 0;
                 for (Vertex v : vertices) {
                         for (Integer i : v.getEdges()) {
-                                // XXX: Delete me, please
-                                System.out.println(i);
                                 if (!includes.contains(i)) {
                                         includes.add(i);
+                                }
+
+                                if (i > highestValue) {
+                                        highestValue = i;
                                 }
                         }
                 }
 
-                walkAble = new boolean[includes.size()];
-                java.util.Arrays.fill(walkAble, true);
+                highestValue++;
+
+                walkAble = new ArrayList<Boolean>(highestValue);
+
+                for (int i = 0; i < highestValue; i++)
+                        walkAble.add(i, false);
+
+                for (Integer i : includes)
+                        walkAble.set(i, true);
 
                 switch (res) {
 
@@ -79,17 +88,21 @@ public class Main {
                 // FIXME: Logic not correct with the booleans, will make it later
 
                 for (int i = 0; i < vertices.size(); i++) {
-                        for (int j = 0; j < vertices.get(i).getEdgeCount(); j++) {
-                                if (walkAble[j]) {
-                                        walkAble[j] = false;
+                        rList.clear();
+                        for (Integer j : vertices.get(i).getEdges()) {
+                                if (walkAble.get(j)) {
+                                        walkAble.set(j, false);
                                         rList.add(i);
+                                        break;
                                 }
+                        }
+
+                        System.out.println("{ " + i + " }");
+                        for (Integer x : rList) {
+                                System.out.println(x+1);
                         }
                 }
 
-                for (Integer i : rList) {
-                        System.out.println(i+1);
-                }
 
                 return null;
         }
