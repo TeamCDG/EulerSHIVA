@@ -1,10 +1,10 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Main {
 
-        // TODO: Use this for calculate*
-        private ArrayList<Boolean> walkAble;
+        private LinkedList<Integer> useAbleEdges;
 
         public static void main(String[] args) {
 
@@ -20,7 +20,7 @@ public class Main {
                         List<Integer> connected = new ArrayList<Integer>();
 
                         for (int x = 0; x < args[i].length(); x++) {
-                                connected.add(new Integer(args[i].charAt(x)));
+                                connected.add(new Integer((args[i].charAt(x) - 48)));
                         }
 
                         vertices.add(new Vertex(i, connected));
@@ -32,30 +32,20 @@ public class Main {
         public Main(List<Vertex> vertices) {
 
                 int res = checkEuler(vertices);
-                ArrayList<Integer> includes = new ArrayList<Integer>();
+                LinkedList<Integer> includes = new LinkedList<Integer>();
 
-                Integer highestValue = 0;
                 for (Vertex v : vertices) {
-                        for (Integer i : v.getEdges()) {
-                                if (!includes.contains(i)) {
-                                        includes.add(i);
-                                }
 
-                                if (i > highestValue) {
-                                        highestValue = i;
-                                }
+                        for (Integer i : v.getEdges()) {
+
+                                if (!includes.contains(i))
+                                        includes.add(i);
+
                         }
+
                 }
 
-                highestValue++;
-
-                walkAble = new ArrayList<Boolean>(highestValue);
-
-                for (int i = 0; i < highestValue; i++)
-                        walkAble.add(i, false);
-
-                for (Integer i : includes)
-                        walkAble.set(i, true);
+                useAbleEdges = new LinkedList<Integer>(includes);
 
                 switch (res) {
 
@@ -82,27 +72,30 @@ public class Main {
                 }
         }
 
-        private String calculateCircle(List<Vertex> vertices) {
-                ArrayList<Integer> rList = new ArrayList<Integer>();
+        private static ArrayList<Integer> rList = new ArrayList<Integer>();
 
-                // FIXME: Logic not correct with the booleans, will make it later
+        private void calculateCircle(int vertex, List<Vertex> vertices) {
 
-                for (int i = 0; i < vertices.size(); i++) {
-                        rList.clear();
-                        for (Integer j : vertices.get(i).getEdges()) {
-                                if (walkAble.get(j)) {
-                                        walkAble.set(j, false);
-                                        rList.add(i);
+                if (vertex < vertices.size()) {
+                        for (Integer i : vertices.get(vertex).getEdges()) {
+                                if (useAbleEdges.contains(i)) {
+                                        useAbleEdges.remove(i);
+                                        rList.add(vertex + 1);
+                                        calculateCircle(++vertex, vertices);
                                         break;
                                 }
                         }
+                }
+        }
 
-                        System.out.println("{ " + i + " }");
-                        for (Integer x : rList) {
-                                System.out.println(x+1);
-                        }
+        private String calculateCircle(List<Vertex> vertices) {
+                for (int i = 0; i < vertices.size(); i++){
+                        calculateCircle(i, vertices);
                 }
 
+                for (Integer in : rList){
+                        System.out.println(in);
+                }
 
                 return null;
         }
