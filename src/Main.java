@@ -55,7 +55,16 @@ public class Main {
                 for (int i = offset; i < args.length; i++) {
 
                     List<Path> connected = new ArrayList<Path>();
-
+                    int knotid = Integer.parseInt(args[i].split(":")[0]);
+                    String[] connections = args[i].split(":")[1].split(";");
+                    
+                    for(int x = 0; x < connections.length; x++)
+                    {
+                    	connected.add(new Path(knotid, Integer.parseInt(connections[x])));
+                    }
+                    
+                    vertices.add(new Vertex(knotid, connected));
+                    /*
                     for (int x = 0; x < args[i].length(); x++) {
                             connected.add(new Path(i+1,(args[i].charAt(x) - 48)));
                             if(!((args[i].charAt(x) - 48) >= 0 && (args[i].charAt(x) - 48) <= 9))
@@ -66,6 +75,8 @@ public class Main {
                     }
 
                     vertices.add(new Vertex(i+1, connected));
+                    */
+                    
             	}
                 
 
