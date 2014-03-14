@@ -54,9 +54,10 @@ public class Main {
                 
                 for (int i = offset; i < args.length; i++) {
 
-                    List<Path> connected = new ArrayList<Path>();
+                    
                     int knotid = Integer.parseInt(args[i].split(":")[0]);
                     String[] connections = args[i].split(":")[1].split(";");
+                    List<Path> connected = new ArrayList<Path>(connections.length);
                     
                     for(int x = 0; x < connections.length; x++)
                     {
@@ -117,12 +118,16 @@ public class Main {
         private void setVisited(int start, int end, List<Vertex> vertices)
         {
         	Path ref = new Path(start, end);
+        	boolean printed = false;
         	for (int i = 0; i < vertices.size(); i++)
         	{
         		if(vertices.get(i).getPaths().contains(ref))
         		{
         			vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).setVisited(true);
-        			System.out.println("[INFO] Path "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getStart()+" ----- "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getEnd()+" marked as visited!");
+        			if(!printed) {
+        				System.out.println("[INFO] Path "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getStart()+" ----- "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getEnd()+" marked as visited!");
+        				printed = true;
+        			}
         		}
         	}
         }
@@ -188,16 +193,17 @@ public class Main {
 
         private String calculateCircle(Vertex start, List<Vertex> vertices) {        	
         	Vertex last = getVertexById(start.getFirstNonVisitedPath().getEnd(), vertices);
-        	String result = start.getId()+""+last.getId();
+        	String result = start.getId()+"->"+last.getId();
         	setVisited(start.getId(), last.getId(), vertices);
         	while(last.getId() != start.getId())
         	{
+        		result += "->";
         		int lid = last.getId();
         		last = getVertexById(last.getFirstNonVisitedPath().getEnd(), vertices);
         		setVisited(lid, last.getId(), vertices);
         		result += last.getId();
         	}
-        	
+        	System.out.println("[INFO] Partial result: "+result);
         	return result+"";
         }
 
@@ -209,13 +215,14 @@ public class Main {
         	{
         		steps.add(calculateCircle(start, vertices));
         		start = getFirstWithPathsAv(vertices);
+        		System.out.println("[INFO] Using "+start.getId()+" as next point.");
         	}
         	
         	String result = steps.get(0);
         	for(int i = 1; i < steps.size(); i++)
         	{
-        		
-        		result = result.substring(0, result.lastIndexOf(steps.get(i).substring(0, 1))) + steps.get(i) + result.substring(result.lastIndexOf(steps.get(i).substring(0, 1)) + 1, result.length());
+        		String sub = steps.get(i).split("->")[0]+"->";
+        		result = result.substring(0, result.lastIndexOf(sub)) + steps.get(i) + "->" + result.substring(result.lastIndexOf(sub) + sub.length(), result.length());
         	}
         	return result;
         }
@@ -241,26 +248,14 @@ public class Main {
         	addpI.add(paddI2);
         	
         	Vertex add = new Vertex(vertices.size()+1, addpI);
-        	vertices.add(add);
+        	vertices.add(0, add);
         	
-        	Vertex start = add;
-        	System.out.println("[INFO] Starting path calculation. Using "+start.getId()+" as added starting point.");
-        	List<String> steps = new ArrayList<String>(vertices.size()*10);
-        	while (arePathLeft(vertices))
-        	{
-        		steps.add(calculateCircle(start, vertices));
-        		start = getFirstWithPathsAv(vertices);
-        	}
+        	System.out.println("[INFO] Starting path calculation. Using "+add.getId()+" as added starting point.");
         	
-        	String result = steps.get(0);
-        	for(int i = 1; i < steps.size(); i++)
-        	{
-        		
-        		result = result.substring(0, result.lastIndexOf(steps.get(i).substring(0, 1))) + steps.get(i) + result.substring(result.lastIndexOf(steps.get(i).substring(0, 1)) + 1, result.length());
-        	}
+        	String result = calculateCircle(vertices);
         	
         	System.out.println("[INFO] Removing generated point "+add.getId());
-        	return result.replace(""+add.getId(), "");
+        	return result.replace(add.getId()+"->", "").replace("->"+add.getId(), "");
         }
 
 		private Vertex getFirstUneven(List<Vertex> vertices) {
