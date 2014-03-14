@@ -215,7 +215,7 @@ public class Main {
         	{
         		steps.add(calculateCircle(start, vertices));
         		start = getFirstWithPathsAv(vertices);
-        		System.out.println("[INFO] Using "+start.getId()+" as next point.");
+        		if(start != null) System.out.println("[INFO] Using "+start.getId()+" as next point.");
         	}
         	
         	String result = steps.get(0);
