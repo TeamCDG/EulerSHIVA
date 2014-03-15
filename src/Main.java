@@ -7,10 +7,7 @@ public class Main {
 		private static List<Vertex> generateCircle(int count)
 		{
 			List<Vertex> ret = new ArrayList<Vertex>(count);
-			if(count == 1) {
-        		System.err.println("[ERROR] 418: you are an idiot hahahahahahahahaha :)");
-        		System.exit(-1);
-        	}
+			
 			return null;
 		}
 		
@@ -35,7 +32,8 @@ public class Main {
                 		System.err.println("[ERROR] 42: I'm leaving on a jet plane cause there is no number and nothing to do for me...");
                 		System.exit(-1);
                 	} else {                		
-                		vertices = generateCircle(Integer.parseInt(args[1]));
+                		vertices = EulerCircleGen.generate(Integer.parseInt(args[1]), args.length > 2 ? Integer.parseInt(args[2]) : 0);
+                		args = new String[]{};
                 	}
                 }
                 else if (args[0].equals("-v") || args[0].equals("/v") || 
@@ -79,8 +77,6 @@ public class Main {
                     */
                     
             	}
-                
-
                 
 
                 new Main(vertices);
