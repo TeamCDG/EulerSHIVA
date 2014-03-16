@@ -26,8 +26,8 @@ class Path(object):
 
 class Vertex(object):
 
-    def __init__(self, id, edges):
-        self.id = int(id)
+    def __init__(self, iD, edges):
+        self.iD = int(iD)
         self.edges = list(edges)
 
     def getEdgeCount(self) -> "int":
@@ -39,13 +39,14 @@ class Vertex(object):
             if not self.edges[i].visited:
                 return self.edges[i]
 
+        return None
+
     def __str__(self) -> "string":
         return "Vertex [edges=" + str(self.edges) + "]"
 
     def hasNonVisitedPaths(self) -> "boolean":
 
         for i in range(len(self.edges)):
-
             if not self.edges[i].visited:
                 return True
 
@@ -74,13 +75,6 @@ class Main(object):
             print("Unknown error in `checkEuler(vertices)'", file=sys.stderr)
             exit(-1)
 
-    def generateCircle(self, count):
-        ret = []
-
-        if count == 1:
-            print("[ERROR] 418: Need to be at least 2", file=sys.stderr)
-            exit(-1)
-
     def checkEuler(self, vertices) -> "int":
         odd = 0
 
@@ -106,20 +100,20 @@ class Main(object):
 
             if ref in vertices[i].edges:
                 tmp = Path(-1,-1)
-                tmp = vertices[i].edges().get(vertices[i].edges().index(ref))
+                tmp = vertices[i].edges.get(vertices[i].edges.index(ref))
                 tmp.setVisited(True)
 
                 if not printed:
                     print("[INFO] Path ", tmp.start, " ----- ", tmp.end, " marked as visited!")
                     printed = True;
 
-    def getVertexById(self, id, vertices) -> "Vertex":
-        id = int(id)
+    def getVertexByiD(self, iD, vertices) -> "Vertex":
+        iD = int(iD)
         vertices = list(vertices)
 
         for i in range(len(vertices)):
 
-            if vertices[i].id == id and vertices[i].getFirstNonVisitedPath() != None:
+            if vertices[i].iD == iD and vertices[i].getFirstNonVisitedPath() is not None:
                 return vertices[i]
 
         return None;
@@ -130,15 +124,15 @@ class Main(object):
         for i in range(len(v1.edges)):
 
             if not v1.edges[i].getVisited():
-                pPS.append(self.getVertexById(v1.edges[i].getEnd(), vertices))
+                pPS.append(self.getVertexByiD(v1.edges[i].end, vertices))
 
         for i in range(len(pPS)):
 
             for x in range(len(pPS[i].edges)):
 
-                if not pPS[i].edges[x].getVisited() and pPS[i].edges[x].getEnd() == v2.id:
+                if not pPS[i].edges[x].visited and pPS[i].edges[x].end == v2.iD:
 
-                    print("[INFO] Calculated to use point ", pPS[i].id)
+                    print("[INFO] Calculated to use point ", pPS[i].iD)
 
                     return pPS[i]
 
@@ -159,20 +153,22 @@ class Main(object):
             if vertices[i].hasNonVisitedPaths():
                 return vertices[i]
 
-    def calculateCircle2(self, start,  vertices) -> "String":
-        last = self.getVertexById(start.getFirstNonVisitedPath().end, vertices)
-        result = str(start.id) + "->" + str(last.id)
-        self.setVisited(start.id, last.id, vertices)
+        return None
 
-        while last.id != start.id:
+    def calculateCircle2(self, start,  vertices) -> "String":
+        last = self.getVertexByiD(start.getFirstNonVisitedPath().end, vertices)
+        result = str(start.iD) + "->" + str(last.iD)
+        self.setVisited(start.iD, last.iD, vertices)
+
+        while last.iD is not start.iD:
 
             result += "->"
 
-            lid = last.id
-            last = self.getVertexById(last.getFirstNonVisitedPath().end, vertices)
-            self.setVisited(lid, last.id, vertices)
+            liD = last.iD
+            last = self.getVertexByiD(last.getFirstNonVisitedPath().end, vertices)
+            self.setVisited(liD, last.iD, vertices)
 
-            result += str(last.id)
+            result += str(last.iD)
 
         print("[INFO] Partial result: ", result)
 
@@ -181,7 +177,7 @@ class Main(object):
     def calculateCircle(self, vertices) -> "String":
         start = vertices[0]
 
-        print("[INFO] Starting circle calculation. Using ", start.id, "as starting point")
+        print("[INFO] Starting circle calculation. Using ", start.iD, "as starting point")
 
         steps = [] #*(len(vertices)*10)
 
@@ -191,28 +187,28 @@ class Main(object):
             start = self.getFirstWithPathsAv(vertices)
 
             if start is not None:
-                print("[INFO] Using ", start.id, "as next point.")
+                print("[INFO] Using ", start.iD, "as next point.")
 
             result = steps[0]
 
             for i in range(1, len(steps)):
 
                 sub = steps[i].split("->")[0] + "->"
-                result = result[0:result.rindex(sub)] + steps[i] + "->" + result[result.rindex(sub) + len(sub) : len(result)]
+                result = result[0:result.rindex(sub)] + steps[i] + "->" + result[result.rindex(sub) + len(sub):len(result)]
 
         return result
 
     def calculatePath(self, vertices) -> "string":
 
         ue = self.getFirstUneven(vertices)
-        padd1 = Path(ue.id, len(vertices)+1)
-        paddI1 = Path(len(vertices)+1, ue.id)
+        padd1 = Path(ue.iD, len(vertices)+1)
+        paddI1 = Path(len(vertices)+1, ue.iD)
 
         ue.addPath(padd1)
 
         ue = self.getFirstUneven(vertices)
-        padd2 = Path(ue.id, len(vertices)+1)
-        paddI2 = Path(len(vertices)+1, ue.id)
+        padd2 = Path(ue.iD, len(vertices)+1)
+        paddI2 = Path(len(vertices)+1, ue.iD)
 
         ue.addPath(padd2)
 
@@ -223,19 +219,21 @@ class Main(object):
         add = Vertex(len(vertices)+1, addpI)
         vertices.insert(0, add)
 
-        print("[INFO] Starting path calculation. Using ", add.id, " as added starting point.")
+        print("[INFO] Starting path calculation. Using ", add.iD, " as added starting point.")
 
         result = self.calculateCircle(vertices)
 
-        print("[INFO] Removing generated point ", add.id)
+        print("[INFO] Removing generated point ", add.iD)
 
-        return result.replace(add.id + "->", "").replace("->" + add.id, "")
+        return result.replace(add.iD + "->", "").replace("->" + add.iD, "")
 
     def getFirstUneven(self, vertices) -> "Vertex":
 
         for i in range(len(vertices)):
             if (vertices[i].getEdgeCount() % 2) != 0:
                 return vertices[i]
+
+        return None
 
 def main():
 
@@ -249,15 +247,15 @@ def main():
 
     for i in range(1, len(sys.argv)):
 
-        knotId = int(sys.argv[i].split(":")[0])
+        knotiD = int(sys.argv[i].split(":")[0])
         connections = sys.argv[i].split(":")[1].split(";")
         connected = [] #*connections
 
         for x in range(len(connections)):
-            connected.append(Path(knotId, int(connections[x])));
-            #connected += [Path(knotId, int(connections[x])) for x in range(len(connections))]
+            connected.append(Path(knotiD, int(connections[x])));
+            #connected += [Path(knotiD, int(connections[x])) for x in range(len(connections))]
 
-        vertices.append(Vertex(knotId, connected))
+        vertices.append(Vertex(knotiD, connected))
 
     Main(vertices)
 
