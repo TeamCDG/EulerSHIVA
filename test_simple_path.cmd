@@ -1,2 +1,2 @@
-java -jar eulershiva.jar 1:2 2:1
+java -jar eulershiva.jar -v 1:2 2:1 
 pause
