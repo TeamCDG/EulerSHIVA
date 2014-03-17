@@ -11,11 +11,26 @@ class Path(object):
         self.end   = int(end)
         self.visited = False
 
-    def hashCode(self): # hash()
-        pass
+    def hash(self):
+        prime = 31
+        result = 1
+        result = prime * result + self.end
+        result = prime * result + self.start
+        return result
 
-    def equals(self): # __eq__ and __ne__
-        pass
+    def __eq__(self, obj):
+        if (obj == None):
+            return False
+        if obj.start == self.start:
+            return True
+        if obj.end == self.end:
+            return True
+        if obj.end != self.end:
+            return False
+        if obj.start != self.start:
+            return False
+        return True
+
 
     def __str__(self) -> "string":
         return "Path [start=" + str(self.start) + ", end=" + str(self.end) + "]"
@@ -68,9 +83,11 @@ class Main(object):
         res = self.checkEuler(vertices)
 
         if (res == 0):
-            print("[INFO] Got result circle: ", self.calculateCircle(vertices))
+            result = self.calculateCircle(vertices)
+            print("[INFO] Got result circle: ", result)
         elif (res == 1):
-            print("[INFO] Got result path: ", self.calculatePath(vertices))
+            result = self.calculatePath(vertices)
+            print("[INFO] Got result path: ", result)
         else:
             print("Unknown error in `checkEuler(vertices)'", file=sys.stderr)
             exit(-1)
@@ -99,9 +116,8 @@ class Main(object):
         for i in range(len(vertices)):
 
             if ref in vertices[i].edges:
-                tmp = Path(-1,-1)
-                tmp = vertices[i].edges.get(vertices[i].edges.index(ref))
-                tmp.setVisited(True)
+                tmp = vertices[i].edges[vertices[i].edges.index(ref)]
+                tmp.visited = True
 
                 if not printed:
                     print("[INFO] Path ", tmp.start, " ----- ", tmp.end, " marked as visited!")
@@ -249,11 +265,10 @@ def main():
 
         knotiD = int(sys.argv[i].split(":")[0])
         connections = sys.argv[i].split(":")[1].split(";")
-        connected = [] #*connections
+        connected = []
 
         for x in range(len(connections)):
             connected.append(Path(knotiD, int(connections[x])));
-            #connected += [Path(knotiD, int(connections[x])) for x in range(len(connections))]
 
         vertices.append(Vertex(knotiD, connected))
 
