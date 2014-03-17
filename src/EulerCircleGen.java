@@ -9,7 +9,7 @@ public abstract class EulerCircleGen {
 		List<Vertex> ret = new ArrayList<Vertex>(knotCount);
 		
 		
-		System.err.println("[Info] Generating euler circle");
+		System.out.println("[Info] Generating euler circle");
 		for(int i = 1; i <= knotCount; i++)
 		{
 			if(i != 1 && i < knotCount)
@@ -51,7 +51,7 @@ public abstract class EulerCircleGen {
 			}
 			
 			ret.get(ret.indexOf(_v1)).addPath(new Path(_v1.getId(), _v2.getId()));
-			System.out.println("[INFO] Adding path: "+_v1.getId()+" ----- "+_v2.getId());
+			if(Main.verbose) System.out.println("[INFO] Adding path: "+_v1.getId()+" ----- "+_v2.getId());
 			ret.get(ret.indexOf(_v2)).addPath(new Path(_v2.getId(), _v1.getId()));
 			
 			while(hasEmptyVertex(ret) || !isCirclePossible(ret))
@@ -60,7 +60,7 @@ public abstract class EulerCircleGen {
 				Vertex v2 = getNext(ret,v1);
 								
 				ret.get(ret.indexOf(v1)).addPath(new Path(v1.getId(), v2.getId()));
-				System.out.println("[INFO] Adding path: "+v1.getId()+" ----- "+v2.getId());
+				if(Main.verbose) System.out.println("[INFO] Adding path: "+v1.getId()+" ----- "+v2.getId());
 				ret.get(ret.indexOf(v2)).addPath(new Path(v2.getId(), v1.getId()));
 				
 			}
@@ -72,9 +72,9 @@ public abstract class EulerCircleGen {
 		{
 			for(Path p: ret.get(i).getPaths())
 			{
-				System.out.println(ret.get(i).getId()+": "+p.getStart()+" ----- "+p.getEnd());
+				if(Main.verbose) System.out.println(ret.get(i).getId()+": "+p.getStart()+" ----- "+p.getEnd());
 			}
-			System.out.println("-----------------");
+			if(Main.verbose) System.out.println("-----------------");
 		}
 		
 		if(knotCount == 1) {
