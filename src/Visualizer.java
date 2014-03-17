@@ -13,6 +13,7 @@ import org.lwjgl.opengl.PixelFormat;
 public class Visualizer {
 	public static float pointsize = 8.0f;
 	public static float speed = 0.001f;
+	public static boolean skipAnimation = false;
 	private List<Vertex> vertices;
 	private List<Path> allPaths;
 	private List<Integer> path;
@@ -37,7 +38,10 @@ public class Visualizer {
 			for(int x = 0; x < paths.size(); x++)
 			{
 				if(!allPaths.contains(paths.get(x)))
+				{
 					allPaths.add(paths.get(x));
+					points.add(getPoint(paths.get(x).getStart()));
+				}
 			}
 		}
 		
@@ -61,10 +65,16 @@ public class Visualizer {
 			
 		    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);	
 			
-		   
+		   if(this.inAnimationFinished)
+		   {
 		    drawPaths();
 		    drawPoints();
 		    drawAnimatedEuler();
+		   }
+		   else
+		   {
+			   drawInAnimation();
+		   }
 		    
 		    Display.update();
 		    Display.sync(60);
@@ -101,16 +111,16 @@ public class Visualizer {
 	    GL11.glColor3f(1.0f, 1.0f, 1.0f);
 	    for(int i = 0; i < vertices.size(); i++)
 	    {
-	    	float[] c = getPoint(vertices.get(i).getId());
+	    	Float[] c = getPoint(vertices.get(i).getId());
 	    	GL11.glVertex3f(c[0], c[1], 0.0f);
 	    }
 	    
 	    GL11.glEnd();
 	}
 	
-	private float[] getPoint(int id)
+	private Float[] getPoint(int id)
 	{
-		return new float[]{(float) (0.9*Math.cos(degToRad((float) ((360.0/vertices.size())*(id-1))))), (float) (0.9*Math.sin(degToRad((float) ((360.0/vertices.size())*(id-1)))))};
+		return new Float[]{(float) (0.9*Math.cos(degToRad((float) ((360.0/vertices.size())*(id-1))))), (float) (0.9*Math.sin(degToRad((float) ((360.0/vertices.size())*(id-1)))))};
 	}
 	
 	private void drawPaths()
@@ -119,8 +129,8 @@ public class Visualizer {
 		GL11.glColor3f(1.0f, 1.0f, 1.0f);
 		for(int i = 0; i < allPaths.size(); i++)
 		{
-			float[] pstart = getPoint(allPaths.get(i).getStart());
-			float[] pend = getPoint(allPaths.get(i).getEnd());
+			Float[] pstart = getPoint(allPaths.get(i).getStart());
+			Float[] pend = getPoint(allPaths.get(i).getEnd());
 			GL11.glVertex3f(pstart[0], pstart[1], 0.0f);
 			GL11.glVertex3f(pend[0], pend[1], 0.0f);
 		}
@@ -129,7 +139,7 @@ public class Visualizer {
 	}
 	
 	private int current = 1;
-	private float[] pos = new float[]{0,0};
+	private Float[] pos = new Float[]{0f,0f};
 	private float delta = 0;
 	private boolean xbg = false;
 	private boolean ybg = false;
@@ -144,7 +154,7 @@ public class Visualizer {
 		{
 			if(current == 1)
 				break;
-			float[] p = getPoint(path.get(i));
+			Float[] p = getPoint(path.get(i));
 			GL11.glVertex3f(p[0], p[1], 0.0f);
 		}
 		
@@ -155,7 +165,7 @@ public class Visualizer {
 		{
 			GL11.glBegin(GL11.GL_LINES);
 			GL11.glColor3f(1.0f, 0.0f, 0.0f);
-			float[] p = getPoint(path.get(current-1));
+			Float[] p = getPoint(path.get(current-1));
 			if(firstTime)
 			{
 				pos = p;
@@ -164,14 +174,14 @@ public class Visualizer {
 			
 			GL11.glVertex3f(p[0], p[1], 0.0f);
 			
-			float[] dest = getPoint(path.get(current));
+			Float[] dest = getPoint(path.get(current));
 			float rad = (float) Math.atan2(dest[0]-pos[0], dest[1]-pos[1]);
 			
 			xbg = pos[0] > dest[0];
 			ybg = pos[1] > dest[1];
 			
-			pos[0] += speed*Math.sin(rad)*delta;
-			pos[1] += speed*Math.cos(rad)*delta;
+			pos[0] += (float) (speed*Math.sin(rad)*delta);
+			pos[1] += (float) (speed*Math.cos(rad)*delta);
 			
 			GL11.glVertex3f(pos[0], pos[1], 0.0f);
 			
@@ -202,5 +212,74 @@ public class Visualizer {
 		}
 		
 		
+	}
+	
+	private int pointsDrawn = 0;
+	private int cooldown = 500;
+	private boolean inAnimationFinished = false;
+	private List<Float[]> points = new ArrayList<Float[]>();
+	private void drawInAnimation()
+	{
+		if(pointsDrawn == vertices.size())
+		{
+			GL11.glBegin(GL11.GL_LINES);
+			GL11.glColor3f(1.0f, 1.0f, 1.0f);
+			
+			for(int i = 0; i < this.allPaths.size(); i++)
+			{
+				
+				Float[] p = getPoint(allPaths.get(i).getStart());
+				
+				GL11.glVertex3f(p[0], p[1], 0.0f);
+				
+				Float[] dest = getPoint(allPaths.get(i).getEnd());
+				
+				
+				if(Math.sqrt((dest[0]-points.get(i)[0])*(dest[0]-points.get(i)[0])+
+						(dest[1]-points.get(i)[1])*(dest[1]-points.get(i)[1])) <= 0.01f)
+				{
+					if(i == 0) inAnimationFinished = true;
+					
+					points.get(i)[0] = dest[0];
+					points.get(i)[1] = dest[1];
+					
+					GL11.glVertex3f(dest[0], dest[1], 0.0f);
+				}
+				else
+				{
+					inAnimationFinished = false;
+					float rad = (float) Math.atan2(dest[0]-points.get(i)[0], dest[1]-points.get(i)[1]);
+					
+					points.get(i)[0] += (float) (speed*Math.sin(rad)*delta);
+					points.get(i)[1] += (float) (speed*Math.cos(rad)*delta);
+					GL11.glVertex3f(points.get(i)[0], points.get(i)[1], 0.0f);
+				}
+				
+				
+			}
+			
+			GL11.glEnd();
+		}
+		else
+		{
+			if(cooldown <= 0)
+			{
+				pointsDrawn++;
+				cooldown = (500/6) * (6/vertices.size());
+			}
+		}
+		
+		GL11.glBegin(GL11.GL_POINTS);
+	    GL11.glColor3f(1.0f, 1.0f, 1.0f);
+		
+		for(int i = 0; i < pointsDrawn; i++)
+		{
+			Float[] c = getPoint(vertices.get(i).getId());
+	    	GL11.glVertex3f(c[0], c[1], 0.0f);
+		}
+		
+		GL11.glEnd();
+		
+		cooldown -= delta;
 	}
 }

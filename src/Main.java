@@ -52,6 +52,12 @@ public class Main {
                     	if(!passedNum) offset+=2;
                     }
                 	
+                	if(args[i].equals("-skipAnimation") || args[i].equals("/skipAnimation"))
+                    {
+                    	Visualizer.skipAnimation = true;
+                    	if(!passedNum) offset+=2;
+                    }
+                	
                 	try
                 	{
                 		if(args[i].contains("1:")||args[i].contains("0:"))
