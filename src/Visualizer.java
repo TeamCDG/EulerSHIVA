@@ -73,7 +73,7 @@ public class Visualizer {
 		Display.destroy();
 	}
 	
-	private long getTime()
+	public static long getTime()
 	{
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}

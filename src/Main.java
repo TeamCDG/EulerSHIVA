@@ -255,6 +255,7 @@ public class Main {
         	Vertex start = vertices.get(0);
         	System.out.println("[INFO] Starting circle calculation. Using "+start.getId()+" as starting point.");
         	List<List<Integer>> steps = new ArrayList<List<Integer>>(vertices.size()*10);
+        	long startingTime = Visualizer.getTime();
         	while (arePathLeft(vertices))
         	{
         		steps.add(calculateCircle(start, vertices));
@@ -276,6 +277,8 @@ public class Main {
         			}
         		}
         	}
+        	long time = Visualizer.getTime()-startingTime;
+        	System.out.println("[INFO] Calculation took "+time+"ms");
         	return pathToString(result);
         }
         
@@ -303,7 +306,7 @@ public class Main {
         	vertices.add(0, add);
         	
         	System.out.println("[INFO] Starting path calculation. Using "+add.getId()+" as added starting point.");
-        	
+        	long startingTime = Visualizer.getTime();
         	String result = calculateCircle(vertices);
         	
         	if(Main.verbose) System.out.println("[INFO] Removing generated point "+add.getId());
@@ -315,6 +318,8 @@ public class Main {
         		vertices.get(i).getPaths().remove(new Path(vertices.get(i).getId(), add.getId()));
         	}
         	
+        	long time = Visualizer.getTime()-startingTime;
+        	System.out.println("[INFO] Calculation took "+time+"ms");
         	return result.replace(add.getId()+"->", "").replace("->"+add.getId(), "");
         }
 

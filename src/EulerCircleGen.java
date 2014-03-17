@@ -10,6 +10,8 @@ public abstract class EulerCircleGen {
 		
 		
 		System.out.println("[Info] Generating euler circle");
+		
+		long startingTime = Visualizer.getTime();
 		for(int i = 1; i <= knotCount; i++)
 		{
 			if(i != 1 && i < knotCount)
@@ -81,6 +83,9 @@ public abstract class EulerCircleGen {
     		System.err.println("[ERROR] 418: you are an idiot hahahahahahahahaha :)");
     		System.exit(-1);
     	}
+		
+		long time = Visualizer.getTime()-startingTime;
+    	System.out.println("[INFO] Generation took "+time+"ms");
 		
 		return ret;
 		
