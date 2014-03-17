@@ -158,7 +158,7 @@ public class Main {
         		{
         			vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).setVisited(true);
         			if(!printed) {
-        				if(this.verbose) System.out.println("[INFO] Path "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getStart()+" ----- "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getEnd()+" marked as visited!");
+        				if(Main.verbose) System.out.println("[INFO] Path "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getStart()+" ----- "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getEnd()+" marked as visited!");
         				printed = true;
         			}
         		}
@@ -191,7 +191,7 @@ public class Main {
         		{
         			if(!pPS.get(i).getPaths().get(x).getVisited() && pPS.get(i).getPaths().get(x).getEnd() == v2.getId())
         			{
-        				if(this.verbose)  System.out.println("[INFO] Calculated to use point "+pPS.get(i).getId());
+        				if(Main.verbose)  System.out.println("[INFO] Calculated to use point "+pPS.get(i).getId());
         				return pPS.get(i);
         			}
         		}
@@ -247,7 +247,7 @@ public class Main {
         		setVisited(lid, last.getId(), vertices);
         		steps.add(last.getId());
         	}
-        	if(this.verbose) System.out.println("[INFO] Partial result: "+pathToString(steps));
+        	if(Main.verbose) System.out.println("[INFO] Partial result: "+pathToString(steps));
         	return steps;
         }
 
@@ -259,7 +259,7 @@ public class Main {
         	{
         		steps.add(calculateCircle(start, vertices));
         		start = getFirstWithPathsAv(vertices);
-        		if(start != null && this.verbose) System.out.println("[INFO] Using "+start.getId()+" as next point.");
+        		if(start != null && Main.verbose) System.out.println("[INFO] Using "+start.getId()+" as next point.");
         	}
         	
         	List<Integer> result = steps.get(0);
@@ -306,7 +306,15 @@ public class Main {
         	
         	String result = calculateCircle(vertices);
         	
-        	System.out.println("[INFO] Removing generated point "+add.getId());
+        	if(Main.verbose) System.out.println("[INFO] Removing generated point "+add.getId());
+        	
+        	vertices.remove(add);
+        	
+        	for(int i = 0; i < vertices.size(); i++)
+        	{
+        		vertices.get(i).getPaths().remove(new Path(vertices.get(i).getId(), add.getId()));
+        	}
+        	
         	return result.replace(add.getId()+"->", "").replace("->"+add.getId(), "");
         }
 
