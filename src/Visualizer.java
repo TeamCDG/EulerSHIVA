@@ -134,6 +134,7 @@ public class Visualizer {
 	private boolean xbg = false;
 	private boolean ybg = false;
 	private int timer = 5000;
+	private boolean firstTime = true;
 	private void drawAnimatedEuler()
 	{
 		GL11.glBegin(GL11.GL_LINE_STRIP);
@@ -141,7 +142,7 @@ public class Visualizer {
 		
 		for(int i = 0; i < current; i++)
 		{
-			if(current == i)
+			if(current == 1)
 				break;
 			float[] p = getPoint(path.get(i));
 			GL11.glVertex3f(p[0], p[1], 0.0f);
@@ -155,8 +156,11 @@ public class Visualizer {
 			GL11.glBegin(GL11.GL_LINES);
 			GL11.glColor3f(1.0f, 0.0f, 0.0f);
 			float[] p = getPoint(path.get(current-1));
-			if(pos == new float[]{0,0})
+			if(firstTime)
+			{
 				pos = p;
+				firstTime = false;
+			}
 			
 			GL11.glVertex3f(p[0], p[1], 0.0f);
 			
@@ -192,6 +196,7 @@ public class Visualizer {
 			if(timer <= 0)
 			{
 				current = 1;
+				firstTime = true;
 				timer = 5000;
 			}
 		}
