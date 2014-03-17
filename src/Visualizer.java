@@ -59,17 +59,23 @@ public class Visualizer {
 		
 		GL11.glPointSize(pointsize);
 		
+		this.inAnimationFinished = Visualizer.skipAnimation;
+		
 		while (!Display.isCloseRequested()) {
 			
 			this.delta = (float) calculateDelta();
 			
 		    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);	
 			
-		   if(this.inAnimationFinished)
+		   if(this.inAnimationFinished && endIn <= 0)
 		   {
-		    drawPaths();
-		    drawPoints();
-		    drawAnimatedEuler();
+			   drawPaths();
+			   drawPoints();
+			   drawAnimatedEuler();
+		   }
+		   else if(endIn > 0)
+		   {
+			   endIn -= delta;
 		   }
 		   else
 		   {
@@ -216,6 +222,7 @@ public class Visualizer {
 	
 	private int pointsDrawn = 0;
 	private int cooldown = 500;
+	private int endIn = 3000;
 	private boolean inAnimationFinished = false;
 	private List<Float[]> points = new ArrayList<Float[]>();
 	private void drawInAnimation()
@@ -236,7 +243,7 @@ public class Visualizer {
 				
 				
 				if(Math.sqrt((dest[0]-points.get(i)[0])*(dest[0]-points.get(i)[0])+
-						(dest[1]-points.get(i)[1])*(dest[1]-points.get(i)[1])) <= 0.01f)
+						(dest[1]-points.get(i)[1])*(dest[1]-points.get(i)[1])) <= 0.02f)
 				{
 					if(i == 0) inAnimationFinished = true;
 					
@@ -265,7 +272,7 @@ public class Visualizer {
 			if(cooldown <= 0)
 			{
 				pointsDrawn++;
-				cooldown = (500/6) * (6/vertices.size());
+				cooldown = (500 / vertices.size())*6;
 			}
 		}
 		
