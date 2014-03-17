@@ -23,6 +23,45 @@ public class Main {
                 List<Vertex> vertices = new ArrayList<Vertex>();
                 
                 int offset = 0;
+                boolean passedNum = false;
+                for(int i = 0; i < args.length; i++)
+                {
+                	if(args[i].equals("-v") || args[i].equals("/v") || 
+                            args[i].equals("-viz") || args[i].equals("/viz") || 
+                            args[i].equals("-visualize") || args[i].equals("/visualize"))
+                    {
+                    	visualisation = true;
+                    	if(!passedNum) offset++;
+                    }
+                	
+                	if(args[i].equals("-verbose") || args[i].equals("/verbose"))
+                    {
+                    	verbose = true;
+                    	if(!passedNum) offset++;
+                    }
+                	
+                	if(args[i].equals("-pointsize") || args[i].equals("/pointsize"))
+                    {
+                    	Visualizer.pointsize = Float.parseFloat(args[i+1]);
+                    	if(!passedNum) offset+=2;
+                    }
+                	
+                	if(args[i].equals("-speed") || args[i].equals("/speed"))
+                    {
+                    	Visualizer.speed = Float.parseFloat(args[i+1]);
+                    	if(!passedNum) offset+=2;
+                    }
+                	
+                	try
+                	{
+                		if(args[i].contains("1:")||args[i].contains("0:"))
+                			passedNum = true; //woops, we passed the numbers in the parameters
+                	}
+                	catch (Exception e)
+                	{
+                		
+                	}
+                }
                 
                 if(args[0].equals("-gen") || args[0].equals("/gen") || 
                    args[0].equals("-g") || args[0].equals("/g") || 
@@ -35,20 +74,10 @@ public class Main {
                 		vertices = EulerCircleGen.generate(Integer.parseInt(args[1]), args.length > 2 ? Integer.parseInt(args[2]) : 0);
                 		args = new String[]{};
                 	}
+                	
+                	
                 }
-                else if (args[0].equals("-v") || args[0].equals("/v") || 
-                        args[0].equals("-viz") || args[0].equals("/viz") || 
-                        args[0].equals("-visualize") || args[0].equals("/visualize"))
-                {
-                	visualisation = true;
-                	offset++;
-                }
-                else if(args[args.length-1].equals("-v") || args[args.length-1].equals("/v") || 
-                        args[args.length-1].equals("-viz") || args[args.length-1].equals("/viz") || 
-                        args[args.length-1].equals("-visualize") || args[args.length-1].equals("/visualize"))
-                {
-                	visualisation = true;
-                }
+                
                 
                 for (int i = offset; i < args.length; i++) {
 
@@ -82,14 +111,22 @@ public class Main {
                 new Main(vertices);
         }
 
+		public static boolean verbose = false;
+
         public Main(List<Vertex> vertices) {
 
                 int res = checkEuler(vertices);
 
                 switch (res) {
 
-                        case 0:  System.out.println("[INFO] Got result circle: "+calculateCircle(vertices)); break;
-                        case 1:  System.out.println("[INFO] Got result path: "+calculatePath(vertices));   break;
+                        case 0:  String result = calculateCircle(vertices);
+                        		 System.out.println("[INFO] Got result circle: "+result); 
+                        		 if(Main.visualisation) new Visualizer(vertices, result);
+                        		 break;
+                        case 1:  result = calculatePath(vertices);
+                        		 System.out.println("[INFO] Got result path: "+result);  
+                        		 if(Main.visualisation) new Visualizer(vertices, result);
+                        		 break;
                         case -1: System.exit(-1);                               break;
                 }
         }
@@ -121,7 +158,7 @@ public class Main {
         		{
         			vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).setVisited(true);
         			if(!printed) {
-        				System.out.println("[INFO] Path "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getStart()+" ----- "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getEnd()+" marked as visited!");
+        				if(this.verbose) System.out.println("[INFO] Path "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getStart()+" ----- "+vertices.get(i).getPaths().get(vertices.get(i).getPaths().indexOf(ref)).getEnd()+" marked as visited!");
         				printed = true;
         			}
         		}
@@ -154,7 +191,7 @@ public class Main {
         		{
         			if(!pPS.get(i).getPaths().get(x).getVisited() && pPS.get(i).getPaths().get(x).getEnd() == v2.getId())
         			{
-        				System.out.println("[INFO] Calculated to use point "+pPS.get(i).getId());
+        				if(this.verbose)  System.out.println("[INFO] Calculated to use point "+pPS.get(i).getId());
         				return pPS.get(i);
         			}
         		}
@@ -184,43 +221,62 @@ public class Main {
         	
         	return null;
         }
+        
+        private String pathToString(List<Integer> steps)
+        {
+        	String result = "";
+        	
+        	for(int i = 0; i < steps.size(); i++)
+        	{
+        		result += steps.get(i) + "->";
+        	}
+        	
+        	return result.endsWith("->") ? result.substring(0, result.length()-2) : result;
+        }
 
-        private static ArrayList<Integer> rList = new ArrayList<Integer>();
-
-        private String calculateCircle(Vertex start, List<Vertex> vertices) {        	
+        private List<Integer> calculateCircle(Vertex start, List<Vertex> vertices) {        	
         	Vertex last = getVertexById(start.getFirstNonVisitedPath().getEnd(), vertices);
-        	String result = start.getId()+"->"+last.getId();
+        	List<Integer> steps = new LinkedList<Integer>();
+        	steps.add(start.getId());
+        	steps.add(last.getId());
         	setVisited(start.getId(), last.getId(), vertices);
         	while(last.getId() != start.getId())
         	{
-        		result += "->";
         		int lid = last.getId();
         		last = getVertexById(last.getFirstNonVisitedPath().getEnd(), vertices);
         		setVisited(lid, last.getId(), vertices);
-        		result += last.getId();
+        		steps.add(last.getId());
         	}
-        	System.out.println("[INFO] Partial result: "+result);
-        	return result+"";
+        	if(this.verbose) System.out.println("[INFO] Partial result: "+pathToString(steps));
+        	return steps;
         }
 
         private String calculateCircle(List<Vertex> vertices) {
         	Vertex start = vertices.get(0);
         	System.out.println("[INFO] Starting circle calculation. Using "+start.getId()+" as starting point.");
-        	List<String> steps = new ArrayList<String>(vertices.size()*10);
+        	List<List<Integer>> steps = new ArrayList<List<Integer>>(vertices.size()*10);
         	while (arePathLeft(vertices))
         	{
         		steps.add(calculateCircle(start, vertices));
         		start = getFirstWithPathsAv(vertices);
-        		if(start != null) System.out.println("[INFO] Using "+start.getId()+" as next point.");
+        		if(start != null && this.verbose) System.out.println("[INFO] Using "+start.getId()+" as next point.");
         	}
         	
-        	String result = steps.get(0);
+        	List<Integer> result = steps.get(0);
         	for(int i = 1; i < steps.size(); i++)
         	{
-        		String sub = steps.get(i).split("->")[0]+"->";
-        		result = result.substring(0, result.lastIndexOf(sub)) + steps.get(i) + "->" + result.substring(result.lastIndexOf(sub) + sub.length(), result.length());
+        		
+        		for(int x = result.size()-1; x >= 0; x--)
+        		{
+        			if(result.get(x) == steps.get(i).get(0))
+        			{
+        				steps.get(i).remove(0);
+        				result.addAll(x+1, steps.get(i));
+        				break;
+        			}
+        		}
         	}
-        	return result;
+        	return pathToString(result);
         }
         
         
