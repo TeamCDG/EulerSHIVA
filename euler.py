@@ -121,7 +121,7 @@ class Main(object):
 
                 if not printed:
                     print("[INFO] Path ", tmp.start, " ----- ", tmp.end, " marked as visited!")
-                    printed = True;
+                    printed = True
 
     def getVertexByiD(self, iD, vertices) -> "Vertex":
         iD = int(iD)
@@ -132,7 +132,7 @@ class Main(object):
             if vertices[i].iD == iD and vertices[i].getFirstNonVisitedPath() is not None:
                 return vertices[i]
 
-        return None;
+        return None
 
     def findVertexBetween(self, v1, v2, vertices) -> "Vertex":
         pPS = [] #*v1.getEdgeCount()
@@ -188,7 +188,7 @@ class Main(object):
 
         print("[INFO] Partial result: ", result)
 
-        return result+"";
+        return result+""
 
     def calculateCircle(self, vertices) -> "String":
         start = vertices[0]
@@ -268,7 +268,7 @@ def main():
         connected = []
 
         for x in range(len(connections)):
-            connected.append(Path(knotiD, int(connections[x])));
+            connected.append(Path(knotiD, int(connections[x])))
 
         vertices.append(Vertex(knotiD, connected))
 
