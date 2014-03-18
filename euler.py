@@ -264,7 +264,7 @@ def main():
     for i in range(1, len(sys.argv)):
 
         knotiD = int(sys.argv[i].split(":")[0])
-        connections = sys.argv[i].split(":")[1].split(";")
+        connections = sys.argv[i].split(":")[1].split(",")
         connected = []
 
         for x in range(len(connections)):
